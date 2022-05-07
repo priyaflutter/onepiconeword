@@ -71,7 +71,7 @@ class _onepicState extends State<onepic> {
     // String s2=list2[0]; //apple
     // print(s2);
 
-    spelling = imagepath.split("/")[1].split("\.")[0]; // apple
+    spelling = imagepath.split("/")[1].split("\.")[0].toUpperCase(); // apple
     print(spelling);
 
     answerlist = spelling.split(""); // [a, p, p, l, e]
@@ -80,7 +80,9 @@ class _onepicState extends State<onepic> {
     toplist = List.filled(answerlist.length, ""); // [, , , , ]
     print(toplist);
 
-    String abcd = "abcdefghijklmnopqrstuvwxyz";
+    // String abcd = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    String abcd = "abcdefghijklmnopqrstuvwxyz".toUpperCase();
+
     List abcdlist = abcd.split(
         ""); //[a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z]
     print(abcdlist);
@@ -173,7 +175,7 @@ class _onepicState extends State<onepic> {
                               width: bodyheight * 0.04,
                               margin: EdgeInsets.all(bodyheight * 0.01),
                               decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: ans,
                                   border: Border.all(color: Color(0x66B3B2B2)),
                                   boxShadow: [
                                     BoxShadow(
@@ -185,7 +187,10 @@ class _onepicState extends State<onepic> {
                               child: Center(
                                   child: Text(
                                 "${toplist[index]}",
-                                style: TextStyle(fontSize: bodyheight * 0.03),
+                                style: TextStyle(
+                                  fontSize: bodyheight * 0.03,
+                                  // decoration: TextDecoration.lineThrough
+                                ),
                               )),
                             ),
                           );
@@ -217,12 +222,16 @@ class _onepicState extends State<onepic> {
                   onTap: () {
                     setState(() {
                       if (bottomlist[index].toString().isNotEmpty) {
-                        toplist[cnt] = bottomlist[index];
                         checkbottomlist[index] = bottomlist[index];
-                        flutterTts0.speak("${bottomlist[index]}");
-                        bottomlist[index] = "";
-                        cnt++;
-                        win();
+                        for (cnt = 0; cnt < toplist.length; cnt++) {
+                          if (toplist[cnt] == "") {
+                            toplist[cnt] = bottomlist[index];
+                            flutterTts0.speak("${bottomlist[index]}");
+                            bottomlist[index] = "";
+                            cnt++;
+                            win();
+                          }
+                        }
                       }
                     });
                   },
@@ -257,21 +266,185 @@ class _onepicState extends State<onepic> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                      color: Colors.green,
-                      border: Border.all(color: Color(0x66B3B2B2)),
-                      boxShadow: [
-                        BoxShadow(
-                            color: Color(0x66B3B2B2),
-                            blurRadius: 2,
-                            spreadRadius: 5,
-                            offset: Offset(1, 0))
-                      ]),
-                  child: Icon(
-                    Icons.lightbulb,
-                    color: Colors.white,
-                    size: bodyheight * 0.05,
+                InkWell(
+                  onTap: () {
+                    showAnimatedDialog(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (BuildContext context) {
+                        return Stack(
+                          children: [
+                            AlertDialog(
+                            backgroundColor: Color(0xf8010410),
+                            actions: [
+                              Container(
+                                height: bodyheight * 0.10,
+                                width: twidth,
+                                margin: EdgeInsets.all(bodyheight * 0.01),
+                                decoration: BoxDecoration(
+                                  // color: Color(0xf8010410),
+                                  image: DecorationImage(
+                                      image:
+                                      AssetImage("Images/dialog_heading.png"),
+                                      fit: BoxFit.fill),
+                                  // color: Colors.red,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "HINT",
+                                    style: TextStyle(
+                                        fontSize: bodyheight * 0.04,
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () {},
+                                child: Container(
+                                  height: bodyheight * 0.10,
+                                  margin: EdgeInsets.all(bodyheight * 0.01),
+                                  width: twidth,
+                                  decoration: BoxDecoration(
+                                      color: Color(0xffd5baba),
+                                      borderRadius: BorderRadius.circular(
+                                          bodyheight * 0.01)),
+                                  // decoration: BoxDecoration(color: Colors.yellow),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.yellow),
+                                        child: Icon(
+                                          Icons.hearing,
+                                          size: bodyheight * 0.04,
+                                        ),
+                                      ),
+                                      Text(
+                                        "WORD PRONOUNCE",
+                                        style: TextStyle(
+                                            fontSize: bodyheight * 0.03,
+                                            fontWeight: FontWeight.w900),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () {},
+                                child: Container(
+                                  height: bodyheight * 0.10,
+                                  margin: EdgeInsets.all(bodyheight * 0.01),
+                                  width: twidth,
+                                  decoration: BoxDecoration(
+                                      color: Color(0xffd5baba),
+                                      borderRadius: BorderRadius.circular(
+                                          bodyheight * 0.01)),
+                                  // decoration: BoxDecoration(color: Colors.yellow),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.yellow),
+                                        child: Icon(
+                                          Icons.record_voice_over,
+                                          size: bodyheight * 0.04,
+                                        ),
+                                      ),
+                                      Text(
+                                        "LETTER PRONOUNCE",
+                                        style: TextStyle(
+                                            fontSize: bodyheight * 0.03,
+                                            fontWeight: FontWeight.w900),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () {},
+                                child: Container(
+                                  height: bodyheight * 0.10,
+                                  margin: EdgeInsets.all(bodyheight * 0.01),
+                                  width: twidth,
+                                  decoration: BoxDecoration(
+                                      color: Color(0xffd5baba),
+                                      borderRadius: BorderRadius.circular(
+                                          bodyheight * 0.01)),
+                                  // decoration: BoxDecoration(color: Colors.yellow),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.yellow),
+                                        child: Icon(
+                                          Icons.spellcheck,
+                                          size: bodyheight * 0.04,
+                                        ),
+                                      ),
+                                      Text(
+                                        " RANDOM LETTER      ",
+                                        style: TextStyle(
+                                            fontSize: bodyheight * 0.03,
+                                            fontWeight: FontWeight.w900),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                            Positioned(
+                              top: 170,
+                              right: 30,
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Align(
+                                  alignment: Alignment.topRight,
+                                  child: CircleAvatar(
+                                    radius: 14.0,
+                                    backgroundColor: Colors.white,
+                                    child: Icon(Icons.close, color: Colors.red),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                          ],
+                        );
+                      },
+                      animationType: DialogTransitionType.slideFromBottomFade,
+                      curve: Curves.fastOutSlowIn,
+                      duration: Duration(seconds: 1),
+                    );
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.green,
+                        border: Border.all(color: Color(0x66B3B2B2)),
+                        boxShadow: [
+                          BoxShadow(
+                              color: Color(0x66B3B2B2),
+                              blurRadius: 2,
+                              spreadRadius: 5,
+                              offset: Offset(1, 0))
+                        ]),
+                    child: Icon(
+                      Icons.lightbulb,
+                      color: Colors.white,
+                      size: bodyheight * 0.05,
+                    ),
                   ),
                 ),
                 InkWell(
@@ -288,16 +461,18 @@ class _onepicState extends State<onepic> {
                               decoration: BoxDecoration(
                                   // color: Colors.red,
                                   boxShadow: [
-                                BoxShadow(
-                                    color: Color(0xFD0E010E),
-                                    blurRadius: 2,
-                                    spreadRadius: 2,
-                                    offset: Offset(2, 2)),
-                              ]),
+                                    BoxShadow(
+                                        color: Color(0xFD0E010E),
+                                        blurRadius: 2,
+                                        spreadRadius: 2,
+                                        offset: Offset(2, 2)),
+                                  ]),
                               child: Center(
                                 child: Text(
                                   "Remove Extra Letters",
-                                  style: TextStyle(fontSize: bodyheight * 0.04,color: Colors.white),
+                                  style: TextStyle(
+                                      fontSize: bodyheight * 0.04,
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -317,28 +492,28 @@ class _onepicState extends State<onepic> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  InkWell(onTap: () {
-                                    Navigator.of(context).pop();
-                                    setState(() {
-
-                                      bottomlist=List.from(answerlist);
-                                      bottomlist.shuffle();
-                                      win();
-
-                                    });
-                                  },
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).pop();
+                                      setState(() {
+                                        bottomlist = List.from(answerlist);
+                                        bottomlist.shuffle();
+                                        win();
+                                      });
+                                    },
                                     child: Container(
-                                      margin: EdgeInsets.all(bodyheight*0.02),
+                                      margin: EdgeInsets.all(bodyheight * 0.02),
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                        Radius.circular(bodyheight * 0.01)),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(
+                                                  bodyheight * 0.01)),
                                           boxShadow: [
-                                        BoxShadow(
-                                            color: Color(0x66B3B2B2),
-                                            blurRadius: 2,
-                                            spreadRadius: 2,
-                                            offset: Offset(2, 2)),
-                                      ]),
+                                            BoxShadow(
+                                                color: Color(0x66B3B2B2),
+                                                blurRadius: 2,
+                                                spreadRadius: 2,
+                                                offset: Offset(2, 2)),
+                                          ]),
                                       child: Text(
                                         "Yes",
                                         style: TextStyle(
@@ -347,20 +522,23 @@ class _onepicState extends State<onepic> {
                                       ),
                                     ),
                                   ),
-                                  InkWell(onTap: () {
-                                    Navigator.of(context).pop();
-                                  },
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).pop();
+                                    },
                                     child: Container(
-                                      margin: EdgeInsets.all(bodyheight*0.02),
-                                      decoration: BoxDecoration(borderRadius: BorderRadius.all(
-                                          Radius.circular(bodyheight * 0.01)),
+                                      margin: EdgeInsets.all(bodyheight * 0.02),
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(
+                                                  bodyheight * 0.01)),
                                           boxShadow: [
-                                        BoxShadow(
-                                            color: Color(0x66B3B2B2),
-                                            blurRadius: 2,
-                                            spreadRadius: 2,
-                                            offset: Offset(2, 2)),
-                                      ]),
+                                            BoxShadow(
+                                                color: Color(0x66B3B2B2),
+                                                blurRadius: 2,
+                                                spreadRadius: 2,
+                                                offset: Offset(2, 2)),
+                                          ]),
                                       child: Text(
                                         "No",
                                         style: TextStyle(
@@ -369,7 +547,6 @@ class _onepicState extends State<onepic> {
                                       ),
                                     ),
                                   ),
-
                                 ],
                               ),
                             )
@@ -410,25 +587,43 @@ class _onepicState extends State<onepic> {
   void win() {
     if (listEquals(toplist, answerlist) == true) {
       setState(() {
+        ans = Colors.green;
         win1 = true;
+        speak();
         msg = "Win.....";
         print("=====${answerlist}");
-        voice();
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
 
-            return first1();
-        },)) ;
+        Future.delayed(Duration(seconds: 2)).then((value) {
+          Navigator.pushReplacement(context, MaterialPageRoute(
+            builder: (context) {
+              return onepic();
+            },
+          ));
+        });
       });
     }
+    // else{
+    //
+    //     if(toplist.isNotEmpty)
+    //       {
+    //
+    //         if(toplist.toString() !=answerlist.toString())
+    //           {
+    //             setState(() {
+    //               msg="try again";
+    //             });
+    //           }
+    //       }
+    // }
   }
 
+  Color ans = Colors.white;
   bool win1 = false;
   String msg = "";
   FlutterTts flutterTts0 = FlutterTts();
   List answer = [];
 
-  void voice() {
+  void speak() {
     flutterTts0.speak("${spelling}");
   }
-
 }
