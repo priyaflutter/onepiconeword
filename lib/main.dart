@@ -1,4 +1,9 @@
+import 'dart:typed_data';
+
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:onepiconeword/avdf.dart';
 
 import 'first.dart';
 
@@ -15,6 +20,26 @@ class first1 extends StatefulWidget {
 }
 
 class _first1State extends State<first1> {
+
+  AudioPlayer player = AudioPlayer();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    audioplay();
+  }
+
+  audioplay() async {
+
+
+    String audioasset = "audio/inspiring-epic-motivation-cinematic-trailer-11218.mp3";
+    ByteData bytes = await rootBundle.load(audioasset); //load audio from assets
+    Uint8List audiobytes = bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes);
+    player.playBytes(audiobytes);
+    
+  }
+
   @override
   Widget build(BuildContext context) {
     double theight = MediaQuery.of(context).size.height;
@@ -49,9 +74,12 @@ class _first1State extends State<first1> {
           ),
           InkWell(
             onTap: () {
+
+              player.stop();
               Navigator.pushReplacement(context, MaterialPageRoute(
                 builder: (context) {
                   return onepic();
+
                 },
               ));
             },
@@ -80,4 +108,10 @@ class _first1State extends State<first1> {
       )),
     );
   }
+
+
+
+
+
+
 }

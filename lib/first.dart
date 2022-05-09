@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:onepiconeword/main.dart';
 
 class onepic extends StatefulWidget {
   const onepic({Key? key}) : super(key: key);
@@ -24,15 +25,23 @@ class _onepicState extends State<onepic> {
   String spelling = "";
   int a = 0;
   List toplist = [];
+  List abcdlist=[];
   int cnt = 0;
   int rtu = 0;
+  String abcd="";
+  late Uint8List audiobytes;
+
+  AudioPlayer player = AudioPlayer();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     initImages();
+    
   }
+
+
 
   Future initImages() async {
     // >> To get paths you need these 2 lines
@@ -81,15 +90,16 @@ class _onepicState extends State<onepic> {
     print(toplist);
 
     // String abcd = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    String abcd = "abcdefghijklmnopqrstuvwxyz".toUpperCase();
+    abcd = "abcdefghijklmnopqrstuvwxyz".toUpperCase();
 
-    List abcdlist = abcd.split(
+    abcdlist = abcd.split(
         ""); //[a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z]
     print(abcdlist);
 
-    abcdlist
-        .shuffle(); //[b, n, h, k, j, z, p, s, i, q, r, m, y, l, f, c, w, a, u, e, t, o, v, g, x, d]
+    abcdlist.shuffle(); //[b, n, h, k, j, z, p, s, i, q, r, m, y, l, f, c, w, a, u, e, t, o, v, g, x, d]
     print(abcdlist);
+
+    bottomlist=abcdlist.getRange(0, 10-answerlist.length).toList();
 
     bottomlist =
         abcdlist.getRange(0, 10 - answerlist.length).toList(); //[q, c, y, v, o]
@@ -100,6 +110,8 @@ class _onepicState extends State<onepic> {
 
     print(bottomlist);
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -151,10 +163,13 @@ class _onepicState extends State<onepic> {
                     Container(
                       height: bodyheight * 0.06,
                       width: twidth,
-                      margin: EdgeInsets.fromLTRB(bodyheight * 0.05,
-                          bodyheight * 0.02, bodyheight * 0.05, 0),
+                      alignment: Alignment.center,
+                       margin: EdgeInsets.all(bodyheight*0.02),
+                      // margin: EdgeInsets.fromLTRB(bodyheight * 0.05,
+                      //     bodyheight * 0.02, bodyheight * 0.05, 0),
                       child: ListView.builder(
                         physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
                         itemCount: toplist.length,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
@@ -230,6 +245,7 @@ class _onepicState extends State<onepic> {
                             bottomlist[index] = "";
                             cnt++;
                             win();
+
                           }
                         }
                       }
@@ -300,7 +316,17 @@ class _onepicState extends State<onepic> {
                                 ),
                               ),
                               InkWell(
-                                onTap: () {},
+                                onTap: ()   {
+
+                                // await Future.delayed(Duration(seconds: 3)).then((value){
+                                //   int result = await player.playBytes(audiobytes);
+                                //   player.playBytes(audiobytes);
+                                // });
+
+
+
+
+                                },
                                 child: Container(
                                   height: bodyheight * 0.10,
                                   margin: EdgeInsets.all(bodyheight * 0.01),
@@ -496,9 +522,18 @@ class _onepicState extends State<onepic> {
                                     onTap: () {
                                       Navigator.of(context).pop();
                                       setState(() {
-                                        bottomlist = List.from(answerlist);
-                                        bottomlist.shuffle();
-                                        win();
+
+                                        // bottomlist= List.from(answerlist);
+                                        // bottomlist.shuffle();
+                                        // win();
+
+                                        removelist = abcdlist.getRange(0, 10-answerlist.length).toList();
+                                        for(int i=0;i<removelist.length;i++)
+                                          {
+                                            int pending=bottomlist.indexOf(removelist[i]);
+                                            bottomlist[pending]="";
+                                          }
+                                        
                                       });
                                     },
                                     child: Container(
@@ -592,6 +627,7 @@ class _onepicState extends State<onepic> {
         speak();
         msg = "Win.....";
         print("=====${answerlist}");
+        sound();
 
         Future.delayed(Duration(seconds: 2)).then((value) {
           Navigator.pushReplacement(context, MaterialPageRoute(
@@ -622,8 +658,21 @@ class _onepicState extends State<onepic> {
   String msg = "";
   FlutterTts flutterTts0 = FlutterTts();
   List answer = [];
+  List removelist=[];
 
   void speak() {
     flutterTts0.speak("${spelling}");
   }
+
+  Future<void> sound() async {
+
+    String audioasset = "audio/totcoisou.wav";
+    ByteData bytes = await rootBundle.load(audioasset); //load audio from assets
+    Uint8List audiobytes = bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes);
+    player.playBytes(audiobytes);
+  }
+
+
+
+
 }
